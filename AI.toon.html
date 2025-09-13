@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Budgeting Pro</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            /* Darker background */
+            color: #e0e0e0;
+            /* Light gray text */
+        }
+
+        .card {
+            background-color: #1e1e1e;
+            border: 1px solid #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 0.75rem;
+        }
+
+        .accent-color {
+            color: #4CAF50;
+            /* A professional blue-green accent */
+        }
+
+        .accent-bg {
+            background-color: #4CAF50;
+        }
+
+        .professional-button {
+            background-color: #4CAF50;
+            color: #fff;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .professional-button:hover {
+            background-color: #45a049;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            background-color: #2e2e2e;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        #expense-list-container::-webkit-scrollbar,
+        #goal-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #expense-list-container::-webkit-scrollbar-track,
+        #goal-list-container::-webkit-scrollbar-track {
+            background: #2e2e2e;
+            border-radius: 10px;
+        }
+
+        #expense-list-container::-webkit-scrollbar-thumb,
+        #goal-list-container::-webkit-scrollbar-thumb {
+            background: #4CAF50;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="p-8">
+
+    <div class="card max-w-7xl mx-auto p-8 lg:p-12 flex flex-col space-y-8">
+
+        <!-- Header and Main Title -->
+        <header class="text-center mb-10">
+            <h1 class="text-4xl lg:text-5xl font-bold tracking-wide accent-color">Student Budgeting Pro</h1>
+            <p class="mt-2 text-lg lg:text-xl text-gray-400">Your smart financial companion.</p>
+        </header>
+
+        <!-- Main Dashboard -->
+        <main class="grid lg:grid-cols-3 gap-8">
+
+            <!-- Dashboard Metrics -->
+            <div class="lg:col-span-2 p-8 card flex flex-col items-center justify-center space-y-4">
+                <h2 class="text-2xl font-bold mb-4 accent-color">Current Financial Snapshot</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-center">
+                    <div class="p-4 bg-gray-900 rounded-xl card">
+                        <p class="text-sm text-gray-400">Total Expenses</p>
+                        <p id="total-expenses" class="text-3xl font-bold mt-1 text-red-400">$0.00</p>
+                    </div>
+                    <div class="p-4 bg-gray-900 rounded-xl card">
+                        <p class="text-sm text-gray-400">Budget Remaining</p>
+                        <p id="budget-remaining" class="text-3xl font-bold mt-1 accent-color">$1000.00</p>
+                    </div>
+                    <div class="p-4 bg-gray-900 rounded-xl card">
+                        <p class="text-sm text-gray-400">Predicted Spending</p>
+                        <p id="predicted-spending" class="text-3xl font-bold mt-1 text-yellow-400">$0.00</p>
+                    </div>
+                </div>
+                <div id="alert-message" class="mt-4 text-center text-xl font-bold text-red-400 hidden">
+                    ALERT: You're approaching your budget limit!
+                </div>
+            </div>
+
+            <!-- Expense & Goal Input Forms -->
+            <div class="p-8 card">
+                <h2 class="text-2xl font-bold mb-4 accent-color">Add Expense</h2>
+                <form id="expense-form" class="space-y-4">
+                    <div>
+                        <input type="text" id="expense-name" placeholder="Expense name (e.g., 'Coffee at the café')"
+                            class="w-full p-3 rounded-lg focus:outline-none" required>
+                    </div>
+                    <div>
+                        <input type="number" id="expense-amount" placeholder="Amount ($)"
+                            class="w-full p-3 rounded-lg focus:outline-none" required>
+                    </div>
+                    <button type="submit" class="w-full professional-button font-bold py-3 rounded-lg">Add
+                        Expense</button>
+                </form>
+
+                <hr class="border-gray-700 my-8">
+
+                <h2 class="text-2xl font-bold mb-4 accent-color">Set Financial Goal</h2>
+                <form id="goal-form" class="space-y-4">
+                    <div>
+                        <input type="text" id="goal-name" placeholder="Goal name (e.g., 'New Laptop')"
+                            class="w-full p-3 rounded-lg focus:outline-none" required>
+                    </div>
+                    <div>
+                        <input type="number" id="goal-amount" placeholder="Target Amount ($)"
+                            class="w-full p-3 rounded-lg focus:outline-none" required>
+                    </div>
+                    <button type="submit" class="w-full professional-button font-bold py-3 rounded-lg">Set Goal</button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Expenses and Goals Sections -->
+        <section class="grid lg:grid-cols-2 gap-8 mt-8">
+
+            <!-- Expense List -->
+            <div class="p-8 card">
+                <h2 class="text-2xl font-bold mb-4 accent-color">Recent Expenses</h2>
+                <div id="expense-list-container" class="space-y-4 h-64 overflow-y-auto">
+                    <!-- Expenses will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Goals List -->
+            <div class="p-8 card">
+                <h2 class="text-2xl font-bold mb-4 accent-color">Financial Goals</h2>
+                <div id="goal-list-container" class="space-y-4 h-64 overflow-y-auto">
+                    <!-- Goals will be dynamically added here -->
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <script>
+        // In-memory data storage (simulates a database)
+        let expenses = [];
+        let goals = [];
+        const monthlyBudget = 1000;
+
+        // DOM Elements
+        const expenseForm = document.getElementById('expense-form');
+        const goalForm = document.getElementById('goal-form');
+        const totalExpensesEl = document.getElementById('total-expenses');
+        const budgetRemainingEl = document.getElementById('budget-remaining');
+        const predictedSpendingEl = document.getElementById('predicted-spending');
+        const expenseListContainer = document.getElementById('expense-list-container');
+        const goalListContainer = document.getElementById('goal-list-container');
+        const alertMessageEl = document.getElementById('alert-message');
+
+        // --- Simulated AI and Analytics Functions ---
+
+        // Simulates NLP-based expense categorization
+        const categorizeExpense = (description) => {
+            const lowerDesc = description.toLowerCase();
+            if (lowerDesc.includes('food') || lowerDesc.includes('cafe') || lowerDesc.includes('restaurant') || lowerDesc.includes('groceries')) {
+                return 'Food';
+            }
+            if (lowerDesc.includes('rent') || lowerDesc.includes('housing') || lowerDesc.includes('dorm')) {
+                return 'Rent';
+            }
+            if (lowerDesc.includes('book') || lowerDesc.includes('tuition') || lowerDesc.includes('fee')) {
+                return 'Education';
+            }
+            if (lowerDesc.includes('gym') || lowerDesc.includes('movie') || lowerDesc.includes('game') || lowerDesc.includes('entertainment')) {
+                return 'Entertainment';
+            }
+            return 'Other';
+        };
+
+        // Simulates predictive spending analysis
+        const predictSpending = () => {
+            if (expenses.length === 0) return 0;
+            const today = new Date();
+            const firstExpenseDate = expenses[0].date;
+            const daysSinceFirst = Math.max(1, (today - firstExpenseDate) / (1000 * 60 * 60 * 24));
+            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const averageDaily = total / daysSinceFirst;
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            return averageDaily * daysInMonth;
+        };
+
+        // --- UI Update Functions ---
+
+        // Renders expenses to the UI
+        const renderExpenses = () => {
+            expenseListContainer.innerHTML = '';
+            expenses.forEach(exp => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center p-4 card';
+                item.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="text-lg font-semibold">${exp.name}</span>
+                        <span class="text-sm text-gray-400">${exp.category}</span>
+                    </div>
+                    <span class="text-xl font-bold text-red-400">$${exp.amount.toFixed(2)}</span>
+                `;
+                expenseListContainer.prepend(item);
+            });
+        };
+
+        // Renders goals to the UI
+        const renderGoals = () => {
+            goalListContainer.innerHTML = '';
+            goals.forEach(goal => {
+                const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                const progress = Math.min(100, (totalExpenses / goal.amount) * 100);
+
+                const item = document.createElement('div');
+                item.className = 'p-4 card';
+                item.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-lg font-semibold">${goal.name}</span>
+                        <span class="text-md font-bold accent-color">$${goal.amount.toFixed(2)}</span>
+                    </div>
+                    <div class="w-full bg-gray-700 rounded-full h-2.5">
+                        <div class="accent-bg h-2.5 rounded-full" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="text-right text-sm text-gray-400 mt-1">${progress.toFixed(0)}% complete</div>
+                `;
+                goalListContainer.prepend(item);
+            });
+        };
+
+        // Updates the dashboard metrics
+        const updateDashboard = () => {
+            const total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const remaining = monthlyBudget - total;
+            const predicted = predictSpending();
+
+            totalExpensesEl.textContent = `$${total.toFixed(2)}`;
+            budgetRemainingEl.textContent = `$${remaining.toFixed(2)}`;
+            predictedSpendingEl.textContent = `$${predicted.toFixed(2)}`;
+
+            if (total > monthlyBudget * 0.8) {
+                alertMessageEl.classList.remove('hidden');
+            } else {
+                alertMessageEl.classList.add('hidden');
+            }
+        };
+
+        // --- Event Listeners and Initial Load ---
+
+        expenseForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('expense-name').value;
+            const amount = parseFloat(document.getElementById('expense-amount').value);
+
+            if (name && !isNaN(amount) && amount > 0) {
+                const category = categorizeExpense(name);
+                expenses.push({ name, amount, category, date: new Date() });
+
+                document.getElementById('expense-name').value = '';
+                document.getElementById('expense-amount').value = '';
+
+                renderExpenses();
+                updateDashboard();
+            }
+        });
+
+        goalForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('goal-name').value;
+            const amount = parseFloat(document.getElementById('goal-amount').value);
+
+            if (name && !isNaN(amount) && amount > 0) {
+                goals.push({ name, amount });
+
+                document.getElementById('goal-name').value = '';
+                document.getElementById('goal-amount').value = '';
+
+                renderGoals();
+            }
+        });
+
+        // Initial render
+        updateDashboard();
+        renderExpenses();
+        renderGoals();
+
+    </script>
+</body>
+
+</html>
